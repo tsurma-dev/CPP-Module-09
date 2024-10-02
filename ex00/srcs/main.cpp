@@ -4,6 +4,7 @@
 #include <limits>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 
 std::string reformatDate(int date) {
