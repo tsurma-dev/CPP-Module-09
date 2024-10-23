@@ -1,4 +1,4 @@
-#include "nodeList.hpp"
+#include "../includes/nodeList.hpp"
 
 nodeList::nodeList() {}
 

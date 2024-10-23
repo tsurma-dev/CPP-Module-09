@@ -1,11 +1,12 @@
-#include "pMergeMe.hpp"
+#include "../includes/pMergeMe.hpp"
 
 void pMergeMe::generateJacobsthalSequenceVec() {
-	this->jacobsthalVec = {0, 1};
+	this->jacobsthalVec.push_back(0);
+	this->jacobsthalVec.push_back(1);
 	int j2 = 0, j1 = 1;
 
 	while (true) {
-		int next_value = j1 + 2 * j2;
+		size_t next_value = j1 + 2 * j2;
 		if (next_value > this->ChainVec.size()) {
 			break;
 		}
@@ -18,11 +19,12 @@ void pMergeMe::generateJacobsthalSequenceVec() {
 }
 
 void pMergeMe::generateJacobsthalSequenceList() {
-	this->jacobsthalList = {0, 1};
+	this->jacobsthalList.push_back(0);
+	this->jacobsthalList.push_back(1);
 	int j2 = 0, j1 = 1;
 
 	while (true) {
-		int next_value = j1 + 2 * j2;
+		size_t next_value = j1 + 2 * j2;
 		if (next_value > this->ChainList.size()) {
 			break;
 		}
@@ -35,7 +37,7 @@ void pMergeMe::generateJacobsthalSequenceList() {
 }
 
 void pMergeMe::printNodeVector() {
-	for (int i = 0; i < this->ChainVec.size(); ++i) {
+	for (size_t i = 0; i < this->ChainVec.size(); ++i) {
 		std::cout << this->ChainVec[i]->_value << " ";
 	}
 	std::cout << std::endl;
@@ -48,22 +50,36 @@ void pMergeMe::printNodeList() {
 	std::cout << std::endl;
 }
 
-void pMergeMe::insertionVec(node*& obj, std::vector<node*>::iterator end) {
-	// Find the correct position to insert the pointer to the object within the given range
-	std::vector<node*>::iterator it = std::lower_bound(this->ChainVec.begin(), end, obj, [](const node* a, const node* b) {
-		return a->_value < b->_value; // Compare based on _value
-	});
+	static bool compareNode(const node* a, const node* b) {
+        return a->_value < b->_value;
+    }
 
-	// Insert the pointer to the given object
-	this->ChainVec.insert(it, obj);
+	static bool compareNodeList(const nodeList* a, const nodeList* b) {
+        return a->_value < b->_value;
+    }
+
+void pMergeMe::insertionVec(node*& obj, std::vector<node*>::iterator end) {
+    // Use the functor to perform the comparison within std::lower_bound
+    std::vector<node*>::iterator it = std::lower_bound(
+        this->ChainVec.begin(),
+        end,
+        obj,
+        compareNode  // Use functor instead of lambda
+    );
+
+    // Insert the pointer to the given object at the correct position
+    this->ChainVec.insert(it, obj);
 }
 
-void pMergeMe::insertionList(nodeList*& obj, std::list<nodeList*>::iterator end) {
-	// Find the correct position to insert the pointer to the object within the given range
-	std::list<nodeList*>::iterator it = std::lower_bound(this->ChainList.begin(), end, obj, [](const nodeList* a, const nodeList* b) {
-		return a->_value < b->_value; // Compare based on _value
-	});
 
+void pMergeMe::insertionList(nodeList*& obj, std::list<nodeList*>::iterator end) {
+    // Use the functor to perform the comparison within std::lower_bound
+    std::list<nodeList*>::iterator it = std::lower_bound(
+        this->ChainList.begin(),
+        end,
+        obj,
+        compareNodeList
+    );
 	// Insert the pointer to the given object
 	this->ChainList.insert(it, obj);
 }
@@ -130,7 +146,7 @@ void pMergeMe::mergeInsertVec(node*& reserve) {
 	//preemptively insert the most recent pairing of the first element at the start.
 	this->ChainVec.insert(this->ChainVec.begin(), toSortChain[0]->_chains.back());
 
-	int jacobsStore = 1;
+	size_t jacobsStore = 1;
 	std::vector<node*>::iterator terminus;
 	node *obj;
 
@@ -139,9 +155,9 @@ void pMergeMe::mergeInsertVec(node*& reserve) {
 	// j = jacobsthal number counting down to the previous one, indexing into the toSortChain
 	// terminus = the position of the object that j references in the main chain
 	// obj = the last added element of terminus
-	for (size_t i = 1; i < this->jacobsthalVec.size() && this->jacobsthalVec[i] <= toSortChain.size(); ++i) {
+	for (size_t i = 1; i < this->jacobsthalVec.size() && this->jacobsthalVec[i] <= static_cast<int>(toSortChain.size()); ++i) {
 		jacobsStore = this->jacobsthalVec[i];
-		for (size_t j = this->jacobsthalVec[i] - 1; j > this->jacobsthalVec[i - 1] - 1; --j) {
+		for (size_t j = this->jacobsthalVec[i] - 1; j > static_cast<size_t>(this->jacobsthalVec[i - 1] - 1); --j) {
 			terminus = std::find(this->ChainVec.begin(), this->ChainVec.end(), toSortChain[j]);
 			obj = toSortChain[j]->_chains.back();
 			insertionVec(obj, terminus);
@@ -149,11 +165,11 @@ void pMergeMe::mergeInsertVec(node*& reserve) {
 	}
 
 	// if there was a node in reserve, insert it
-	if (reserve != nullptr)
+	if (reserve != NULL)
 		insertionVec(reserve, this->ChainVec.end());
 
 	// sort what was larger than the last jacobsthal position from back to front
-	for (size_t i = toSortChain.size() - 1; i > jacobsStore - 1 && i >= 0; --i) {
+	for (size_t i = toSortChain.size() - 1; i > jacobsStore - 1; --i) {
 		terminus = std::find(this->ChainVec.begin(), this->ChainVec.end(), toSortChain[i]);
 		obj = toSortChain[i]->_chains.back();
 		insertionVec(obj, terminus);
@@ -172,7 +188,7 @@ void pMergeMe::mergeInsertList(nodeList*& reserve) {
 	//preemptively insert the most recent pairing of the first element at the start.
 	this->ChainList.insert(this->ChainList.begin(), (*toSortChain.begin())->_chains.back());
 
-	int jacobsStore = 1;
+	size_t jacobsStore = 1;
 	std::list<nodeList*>::iterator terminus;
 	std::list<int>::iterator temp;
 	std::list<nodeList*>::iterator tempListIt;
@@ -183,12 +199,15 @@ void pMergeMe::mergeInsertList(nodeList*& reserve) {
 	// j = jacobsthal number counting down to the previous one, indexing into the toSortChain
 	// terminus = the position of the object that j references in the main chain
 	// obj = the last added element of terminus
+	
+
+
 	for (size_t i = 1; i < this->jacobsthalList.size(); ++i) {
 		temp = this->jacobsthalList.begin();
 		std::advance(temp, i);
-		if (*temp > toSortChain.size())
+		if (*temp > static_cast<int>(toSortChain.size()))
 			break;
-		for (size_t j = *temp - 1; j > jacobsStore - 1; --j) {
+		for (size_t j = *temp - 1; j > jacobsStore ; --j) {
 			tempListIt = toSortChain.begin();
 			std::advance(tempListIt, j);
 			terminus = std::find(this->ChainList.begin(), this->ChainList.end(), *tempListIt);
@@ -199,18 +218,19 @@ void pMergeMe::mergeInsertList(nodeList*& reserve) {
 	}
 
 	// if there was a node in reserve, insert it
-	if (reserve != nullptr)
+	if (reserve != NULL)
 		insertionList(reserve, this->ChainList.end());
 
 	// sort what was larger than the last jacobsthal position from back to front
-	for (size_t i = toSortChain.size() - 1; i > jacobsStore - 1 && i >= 0; --i) {
-		tempListIt = toSortChain.begin();
-		std::advance(tempListIt, i);
+	
+	tempListIt = toSortChain.end();
+	--tempListIt;
+	for (size_t i = toSortChain.size() - jacobsStore; i > 0; --i) {
 		terminus = std::find(this->ChainList.begin(), this->ChainList.end(), *tempListIt);
 		obj = (*tempListIt)->_chains.back();
 		insertionList(obj, terminus);
+		--tempListIt;
 	}
-
 	//pop every node that was inserted
 	for (std::list<nodeList*>::iterator it = toSortChain.begin(); it != toSortChain.end(); ++it) {
 		(*it)->_chains.pop_back();
@@ -218,16 +238,10 @@ void pMergeMe::mergeInsertList(nodeList*& reserve) {
 }
 
 void pMergeMe::FordJohnsonSortVec() {
-	node* reserve = nullptr;
+	node* reserve = NULL;
 
 	if (this->ChainVec.size() == 1)
 		return;
-
-	if (this->ChainVec.size() == 2) {
-		if ((*this->ChainVec.begin())->_value > (*this->ChainVec.begin() + 1)->_value)
-			std::swap(this->ChainVec[0], this->ChainVec[1]);
-		return ;
-	}
 	buildTreeVec(reserve);
 	FordJohnsonSortVec();
 	mergeInsertVec(reserve);
@@ -235,29 +249,22 @@ void pMergeMe::FordJohnsonSortVec() {
 }
 
 void pMergeMe::FordJohnsonSortList() {
-	nodeList* reserve = nullptr;
+	nodeList* reserve = NULL;
 
 	if (this->ChainList.size() == 1)
 		return;
-
-	if (this->ChainList.size() == 2) {
-		if ((*this->ChainList.begin())->_value > (*this->ChainList.begin() + 1)->_value)
-			std::swap(*this->ChainList.begin(), *this->ChainList.begin()++);
-		return ;
-	}
 	buildTreeList(reserve);
 	FordJohnsonSortList();
 	mergeInsertList(reserve);
-
 }
 
 pMergeMe::~pMergeMe() {
   for (std::vector<node *>::iterator it = this->backupVec.begin();
        it != backupVec.end(); ++it) {
-    if (*it != nullptr) delete (*it);
+    if (*it != NULL) delete (*it);
   }
   for (std::list<nodeList *>::iterator it = this->backupList.begin();
        it != backupList.end(); ++it) {
-    if (*it != nullptr) delete (*it);
+    if (*it != NULL) delete (*it);
   }
 }
