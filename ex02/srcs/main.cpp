@@ -1,4 +1,4 @@
-#include "../includes/pMergeMe.hpp"
+#include "../includes/PmergeMe.hpp"
 #include <stdlib.h>
 #include <iomanip>
 #include <sys/time.h>
@@ -10,30 +10,37 @@ static void printIntVector(std::vector<int>& input) {
 	std::cout << std::endl;
 }
 
+static void RfillInput(std::vector<int>& input, size_t amount) {
+	input.empty();
+	input.reserve(amount);
+	for (size_t i = 0; i < amount; ++i)
+		input.push_back(rand());
+
+}
 
 int main(void) {
 	std::vector<int> input;
-
-	for (int i = 0; i < 10000; ++i)
-		input.push_back(rand());
-
 	timeval VecBegin, VecEnd, ListBegin, ListEnd;
-	pMergeMe a(input);
+	double VecDuration = 0, ListDuration = 0;
+
+
+	RfillInput(input, 1000);
+	PmergeMe a(input);
 	gettimeofday(&VecBegin, 0);
 	a.FordJohnsonSortVec();
 	gettimeofday(&VecEnd, 0);
+
 	gettimeofday(&ListBegin, 0);
 	a.FordJohnsonSortList();
 	gettimeofday(&ListEnd, 0);
 
-	double VecDuration, ListDuration;
-	VecDuration = (VecEnd.tv_sec - VecBegin.tv_sec) * 1000 + (VecEnd.tv_usec - VecBegin.tv_usec)*1e-3;
-	ListDuration = (ListEnd.tv_sec - ListBegin.tv_sec) * 1000 + (ListEnd.tv_usec - ListBegin.tv_usec)*1e-3;
-	std::cout << std::fixed << std::setprecision(5);
+	VecDuration = (VecEnd.tv_sec - VecBegin.tv_sec) * 1000 + (VecEnd.tv_usec - VecBegin.tv_usec) * 1e-3;
+	ListDuration = (ListEnd.tv_sec - ListBegin.tv_sec) * 1000 + (ListEnd.tv_usec - ListBegin.tv_usec) * 1e-3;
+	std::cout << std::fixed << std::setprecision(4);
 	std::cout << "before: ";
 	printIntVector(input);
 
-	std::cout << "\nAfter: ";
+	std::cout << "After: ";
 	a.printNodeVector();
 	std::cout << "Time to process a range of " << a.ChainVec.size() << " with std::vector : " << VecDuration << " ms\n";
 	std::cout << "Time to process a range of " << a.ChainList.size() << " with std::list : " << ListDuration << " ms\n";

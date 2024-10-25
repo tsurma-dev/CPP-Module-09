@@ -1,12 +1,12 @@
 CXX = c++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++98
-NAME = sort
+CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -Wpedantic -O3
+NAME = PmergeMe.out
 MAKEFLAGS = --no-print-directory
 
 SRC =	srcs/main.cpp\
 		srcs/node.cpp\
 		srcs/nodeList.cpp\
-		srcs/pMergeMe.cpp
+		srcs/PmergeMe.cpp
 
 OBJ = $(SRC:.cpp=.o)
 

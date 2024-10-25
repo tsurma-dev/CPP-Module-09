@@ -9,13 +9,13 @@
 #include "nodeList.hpp"
 
 
-class pMergeMe
+class PmergeMe
 {
 public:
-	pMergeMe(std::vector<int> input);
-	pMergeMe(pMergeMe& other);
-	pMergeMe& operator=(pMergeMe& other);
-	~pMergeMe();
+	PmergeMe(std::vector<int>& input);
+	PmergeMe(PmergeMe& other);
+	PmergeMe& operator=(PmergeMe& other);
+	~PmergeMe();
 	void printNodeVector();
 	void printNodeList();
 	std::vector<node*> ChainVec;
