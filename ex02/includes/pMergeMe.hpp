@@ -11,6 +11,21 @@
 
 class pMergeMe
 {
+public:
+	pMergeMe(std::vector<int> input);
+	pMergeMe(pMergeMe& other);
+	pMergeMe& operator=(pMergeMe& other);
+	~pMergeMe();
+	void printNodeVector();
+	void printNodeList();
+	std::vector<node*> ChainVec;
+	std::vector<node*> backupVec;
+	std::vector<int> jacobsthalVec;
+	std::list<nodeList*> ChainList;
+	std::list<nodeList*> backupList;
+	std::list<int> jacobsthalList;
+	void FordJohnsonSortVec();
+	void FordJohnsonSortList();
 private:
 	void generateJacobsthalSequenceVec();
 	void generateJacobsthalSequenceList();
@@ -20,20 +35,6 @@ private:
 	void mergeInsertList(nodeList*& reserve);
 	void insertionVec(node*& obj, std::vector<node*>::iterator end);
 	void insertionList(nodeList*& obj, std::list<nodeList*>::iterator end);
-public:
-	void printNodeVector();
-	void printNodeList();
-	pMergeMe(std::vector<int> input);
-	std::vector<node*> ChainVec;
-	std::vector<node*> backupVec;
-	std::vector<int> jacobsthalVec;
-
-	std::list<nodeList*> ChainList;
-	std::list<nodeList*> backupList;
-	std::list<int> jacobsthalList;
-	void FordJohnsonSortVec();
-	void FordJohnsonSortList();
-	~pMergeMe();
 };
 
 

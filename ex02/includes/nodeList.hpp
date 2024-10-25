@@ -8,8 +8,9 @@ public:
 	int					_value;
 	std::list<nodeList*>	_chains;
 	nodeList(int value) : _value(value) {};
-	nodeList();
 	~nodeList();
+private:
+	nodeList();
 };
 
 #endif
