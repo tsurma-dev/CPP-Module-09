@@ -1,7 +1,11 @@
 #include "../includes/PmergeMe.hpp"
 #include <stdlib.h>
 #include <iomanip>
-#include <sys/time.h>
+#include <ctime>
+#include <cstring>
+#include <cctype>
+#include <exception>
+
 
 static void printIntVector(std::vector<int>& input) {
 	for (size_t i = 0; i < input.size(); ++i) {
@@ -10,32 +14,72 @@ static void printIntVector(std::vector<int>& input) {
 	std::cout << std::endl;
 }
 
-static void RfillInput(std::vector<int>& input, size_t amount) {
-	input.empty();
-	input.reserve(amount);
-	for (size_t i = 0; i < amount; ++i)
-		input.push_back(rand());
+// static void RfillInput(std::vector<int>& input, size_t amount) {
+// 	input.empty();
+// 	input.reserve(amount);
+// 	for (size_t i = 0; i < amount; ++i)
+// 		input.push_back(rand());
+// }
 
+static void printError(std::string message) {
+	std::cerr << "Error: " << message << std::endl;
 }
 
-int main(void) {
+static void argToInput(std::vector<int>& input, char** argv) {
+
+	size_t i = -1;
+	while (argv[1][++i] != '\0') {
+		 if (!std::isdigit(argv[1][i]) && !std::isspace(argv[1][i])) {
+			throw std::invalid_argument("Input has to only containe digits and whitespaces.");
+		 }
+	}
+
+	char* token = std::strtok(argv[1], " ");
+	while (token != NULL) {
+		input.push_back(std::atoi(token));
+		token = std::strtok(NULL, " ");
+	}
+
+	if (input.size() <= 2) {
+		throw std::length_error("Too few elements to sort.");
+	}
+	for (std::vector<int>::iterator it = input.begin(); it != input.end(); ++it) {
+		if (*it < 0)
+			throw std::range_error("Numbers are not allowed to be negative.");
+		}
+}
+
+int main(int argc, char**argv) {
 	std::vector<int> input;
-	timeval VecBegin, VecEnd, ListBegin, ListEnd;
-	double VecDuration = 0, ListDuration = 0;
+	std::clock_t VecStart, VecEnd, ListStart, ListEnd;
+	double ListDuration, VecDuration;
 
+	if (argc != 2) {
+		printError("Please give a valid sequence in a single Argument");
+		return (1);
+	}
+	try
+	{
+		argToInput(input, argv);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+		return (1);
+	}
 
-	RfillInput(input, 1000);
+	// RfillInput(input, 100000);
 	PmergeMe a(input);
-	gettimeofday(&VecBegin, 0);
+	VecStart = std::clock();
 	a.FordJohnsonSortVec();
-	gettimeofday(&VecEnd, 0);
+	VecEnd = std::clock();
 
-	gettimeofday(&ListBegin, 0);
+	ListStart = std::clock();
 	a.FordJohnsonSortList();
-	gettimeofday(&ListEnd, 0);
+	ListEnd = std::clock();
 
-	VecDuration = (VecEnd.tv_sec - VecBegin.tv_sec) * 1000 + (VecEnd.tv_usec - VecBegin.tv_usec) * 1e-3;
-	ListDuration = (ListEnd.tv_sec - ListBegin.tv_sec) * 1000 + (ListEnd.tv_usec - ListBegin.tv_usec) * 1e-3;
+	VecDuration = 1000.0 * (VecEnd - VecStart) / CLOCKS_PER_SEC;
+	ListDuration = 1000.0 * (ListEnd - ListStart) / CLOCKS_PER_SEC;
 	std::cout << std::fixed << std::setprecision(4);
 	std::cout << "before: ";
 	printIntVector(input);

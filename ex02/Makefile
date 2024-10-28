@@ -1,5 +1,5 @@
 CXX = c++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -Wpedantic -O3
+CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -Wpedantic -Ofast
 NAME = PmergeMe.out
 MAKEFLAGS = --no-print-directory
 
