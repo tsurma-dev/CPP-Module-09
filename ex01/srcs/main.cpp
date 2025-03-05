@@ -10,7 +10,7 @@ int main(int argc, char* argv[]) {
 	}
 	std::stack<int> stack;
 	std::string input = argv[1];
-	int hold;
+	int hold = 0;
 	for (std::string::iterator it = input.begin(); it != input.end(); ++it) {
 		if (isdigit(*it)) {
 			stack.push(*it - '0');
@@ -35,6 +35,10 @@ int main(int argc, char* argv[]) {
 		case '/':
 			hold = stack.top();
 			stack.pop();
+      if (hold == 0) {
+        std::cerr << "Division by 0" << std::endl;
+        return (1);
+      }
 			stack.top() /= hold;
 			break;
 		case '*':

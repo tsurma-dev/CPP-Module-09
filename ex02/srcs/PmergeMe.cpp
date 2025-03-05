@@ -1,5 +1,7 @@
 #include "../includes/PmergeMe.hpp"
 
+PmergeMe::PmergeMe() {}
+
 void PmergeMe::generateJacobsthalSequenceVec() {
 	this->jacobsthalVec.push_back(0);
 	this->jacobsthalVec.push_back(1);

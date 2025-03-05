@@ -7,7 +7,10 @@ class node {
 public:
 	int					_value;
 	std::vector<node*>	_chains;
-	node(int value) : _value(value) {};
+
+	node(int value);
+  node(node& other);
+  node& operator=(node& other);
 	~node();
 private:
 	node();

@@ -1,6 +1,6 @@
 CXX = c++
-CXXFLAGS = -Wall -Werror -Wextra -std=c++98 -Wpedantic -Ofast
-NAME = PmergeMe.out
+CXXFLAGS = -Wall -Werror -Wextra -std=c++98
+NAME = PmergeMe
 MAKEFLAGS = --no-print-directory
 
 SRC =	srcs/main.cpp\

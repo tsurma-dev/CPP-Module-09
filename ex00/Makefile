@@ -1,6 +1,6 @@
 CXX = c++
 CXXFLAGS = -Wall -Werror -Wextra -std=c++98
-NAME = btc.out
+NAME = btc
 MAKEFLAGS = --no-print-directory
 
 SRC =	srcs/main.cpp\

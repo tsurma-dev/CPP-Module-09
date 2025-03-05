@@ -27,6 +27,7 @@ public:
 	void FordJohnsonSortVec();
 	void FordJohnsonSortList();
 private:
+  PmergeMe();
 	void generateJacobsthalSequenceVec();
 	void generateJacobsthalSequenceList();
 	void buildTreeVec(node*& reserve);

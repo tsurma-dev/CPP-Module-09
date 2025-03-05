@@ -27,19 +27,17 @@ static void printError(std::string message) {
 
 static void argToInput(std::vector<int>& input, char** argv) {
 
-	size_t i = -1;
-	while (argv[1][++i] != '\0') {
-		 if (!std::isdigit(argv[1][i]) && !std::isspace(argv[1][i])) {
-			throw std::invalid_argument("Input has to only containe digits and whitespaces.");
-		 }
-	}
 
-	char* token = std::strtok(argv[1], " ");
-	while (token != NULL) {
-		input.push_back(std::atoi(token));
-		token = std::strtok(NULL, " ");
-	}
-
+  for (std::size_t i = 1; argv[i] != NULL; ++i) {
+    for (std::size_t j = 0; argv[i][j] != '\0'; ++j) {
+      if (!std::isdigit(argv[i][j]) && !std::isspace(argv[i][j])) {
+        throw std::invalid_argument("Input has to only contain digits and positive numbers.");
+      }
+    }
+  }
+  for (std::size_t i = 1; argv[i] != NULL; ++i) {
+    input.push_back(std::atoi(argv[i]));
+  }
 	if (input.size() <= 2) {
 		throw std::length_error("Too few elements to sort.");
 	}
@@ -54,8 +52,8 @@ int main(int argc, char**argv) {
 	std::clock_t VecStart, VecEnd, ListStart, ListEnd;
 	double ListDuration, VecDuration;
 
-	if (argc != 2) {
-		printError("Please give a valid sequence in a single Argument");
+	if (argc == 1) {
+		printError("Please give a valid sequence");
 		return (1);
 	}
 	try
@@ -64,11 +62,10 @@ int main(int argc, char**argv) {
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		printError(e.what());
 		return (1);
 	}
 
-	// RfillInput(input, 100000);
 	PmergeMe a(input);
 	VecStart = std::clock();
 	a.FordJohnsonSortVec();

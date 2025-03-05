@@ -44,22 +44,41 @@ bool valiDate(int date) {
 	return (true);
 }
 
-int main(void) {
-	std::ifstream in("input.txt");
+int main(int argc, char** argv) {
+  if (argc != 2) {
+    std::cout << "Please specify an input file." << std::endl;
+    return (0);
+  }
+	std::ifstream in(argv[1]);
+  if (in.is_open() == false) {
+    std::cerr << "Cannot open input file. Please check if it exists." << std::endl;
+    return (1);
+  }
 	std::ifstream data("data.csv");
+  if (data.is_open() == false) {
+    std::cerr << "Cannot open database. Please check if it exists." << std::endl;
+    return (1);
+  }
 	std::map<int, float> database;
 	std::string line;
 	float floatstore;
 	int		intstore;
 	std::map<int, float>::iterator it;
 	while (getline(data, line)) {
-		line.erase(std::remove(line.begin(), line.end(), '-'), line.end());
-		if (line.find(',') != line.npos)
-			floatstore = atof(line.c_str() + line.find(',') + 1);
-		database[atoi(line.c_str())] = floatstore;
-	}
+
+
+    if (line.find(',') != line.npos)
+    floatstore = atof(line.c_str() + line.find(',') + 1);
+    else {
+      std::cerr << "Error: bad data => " << line << "\n";
+      continue;
+    }
+    line.erase(std::remove(line.begin(), line.end(), '-'), line.begin() + line.find(','));
+    database[atoi(line.c_str())] = floatstore;
+
+  }
 	while (getline(in, line)) {
-		line.erase(std::remove(line.begin(), line.end(), '-'), line.end());
+		line.erase(std::remove(line.begin(), line.begin() + line.find('|'), '-'), line.begin() + line.find('|'));
 		if (line.find('|') != line.npos)
 			floatstore = atof(line.c_str() + line.find('|') + 1);
 		intstore = atoi(line.c_str());
@@ -77,7 +96,9 @@ int main(void) {
 			std::cerr << "Error: too large a number" << "\n";
 		else if (floatstore < 0 || it->second < 0)
 			std::cerr << "Error: negative number" << "\n";
-		else
+		else {
+      std::cout << std::fixed << std::setprecision(3);
 			std::cout << reformatDate(intstore) << " => " << floatstore << " => " << floatstore * it->second << "\n";
-	}
+    }
+  }
 }
