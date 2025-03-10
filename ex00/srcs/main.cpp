@@ -26,7 +26,7 @@ void printMap(const std::map<int, float>& database) {
 }
 
 bool leapYearCheck(int year) {
-	return (year % 4 == 0 || (year % 100 != 0 || year % 400 == 0));
+  return ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0);
 }
 
 bool valiDate(int date) {
